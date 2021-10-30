@@ -3,14 +3,14 @@ from typing import List
 
 from anki.template import TemplateRenderOutput, TemplateRenderContext
 from anki.hooks import card_did_render
-
+from aqt import mw
 
 css = """
 <style>
 .tag {
     display: inline-block;
-    margin: 5px;
-    margin-bottom: 10px;
+    margin: 2px;
+    margin-bottom: 15px;
     padding: 5px;
     border: 1px dashed black;
     font-size: small;
@@ -48,18 +48,22 @@ def format_color(color):
     return "#" + pad_zero(r) + pad_zero(g) + pad_zero(b)
 
 
+config = mw.addonManager.getConfig(__name__)
+
+
 def taglist_str(tags: List[str]) -> str:
     elements = []
     for tag in tags:
         color = rand_color()
         bg_color = format_color(color)
         fg_color = format_color(fb_from_bg(color))
-        tag_el = f"""<a href=# onclick="pycmd('search:tag:{tag}'); return false;" class="tag" style="color: {fg_color}; background-color: {bg_color};">{tag}</a>"""
+
+        if config.get("nocolors", False):
+            styles = """style="color: grey; border: none;" """
+        else:
+            styles = f"""style="color: {fg_color}; background-color: {bg_color};" """
+        tag_el = f"""<a href=# onclick="pycmd('search:tag:{tag}'); return false;" class="tag" {styles}>{tag}</a>"""
         elements.append(tag_el)
-        # add a non-breaking space for easy copying
-        elements.append("\xA0")
-    if len(elements) > 0:
-        elements.pop()
 
     return "\n".join(elements)
 
