@@ -52,8 +52,8 @@ def taglist_str(tags: List[str]) -> str:
         color = rand_color()
         bg_color = format_color(color)
         fg_color = format_color(fb_from_bg(color))
-        span = f'<span class="tag" style="color: {fg_color}; background-color: {bg_color};">{tag}</span>'
-        elements.append(span)
+        tag_el = f"""<a href=# onclick="pycmd('search:tag:{tag}'); return false;" class="tag" style="color: {fg_color}; background-color: {bg_color};">{tag}</a>"""
+        elements.append(tag_el)
         # add a non-breaking space for easy copying
         elements.append("\xA0")
     if len(elements) > 0:
