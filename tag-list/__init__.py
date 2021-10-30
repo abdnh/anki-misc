@@ -10,8 +10,10 @@ css = """
 .tag {
     display: inline-block;
     margin: 5px;
+    margin-bottom: 10px;
     padding: 5px;
     border: 1px dashed black;
+    font-size: small;
 }
 </style>
 """
