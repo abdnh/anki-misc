@@ -1,5 +1,6 @@
 import random
 from typing import List
+import re
 
 from anki.template import TemplateRenderOutput, TemplateRenderContext
 from anki.hooks import card_did_render
@@ -57,12 +58,12 @@ def taglist_str(tags: List[str]) -> str:
         color = rand_color()
         bg_color = format_color(color)
         fg_color = format_color(fb_from_bg(color))
-
         if config.get("nocolors", False):
             styles = """style="color: grey; border: none;" """
         else:
             styles = f"""style="color: {fg_color}; background-color: {bg_color};" """
-        tag_el = f"""<a href=# onclick="pycmd('search:tag:{tag}'); return false;" class="tag" {styles}>{tag}</a>"""
+        escaped_tag = re.sub(r"[*_\\]", r"\\\g<0>", tag).replace("\\", "\\\\")
+        tag_el = f"""<a href=# onclick="pycmd('search:tag:{escaped_tag}'); return false;" class="tag" {styles}>{tag}</a>"""
         elements.append(tag_el)
 
     return "\n".join(elements)
