@@ -9,6 +9,6 @@ identical front fields, which I'm mostly not be able to distinguish without some
 This add-on displays the tag list unconditionally for all note types. I may add an option to change this in the future.
 
 ## TODO
-- [] generate colors statically instead of using JS so that the front and back sides are consistent.
+- [x] generate colors statically instead of using JS so that the front and back sides are consistent.
 - [] make tags clickable with the help of the browser-link add-on. Similar to https://ankiweb.net/shared/info/380714095.
  

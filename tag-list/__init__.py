@@ -1,60 +1,9 @@
+import random
+from typing import List
+
 from anki.template import TemplateRenderOutput, TemplateRenderContext
 from anki.hooks import card_did_render
 
-js = """
-<script>
-    /* Some snippets are taken from https://stackoverflow.com/a/35970186 */
-
-    function randColor() {
-        var x = Math.floor(Math.random() * 256);
-        var y = Math.floor(Math.random() * 256);
-        var z = Math.floor(Math.random() * 256);
-        return [x, y, z];
-    }
-
-    function fgFromBg(color) {
-        let r = color[0];
-        let g = color[1];
-        let b = color[2];
-        return (r * 0.299 + g * 0.587 + b * 0.114) > 186
-            ? [0,0,0]
-            : [255,255,255];
-    }
-
-    function formatColor(color) {
-        let r = color[0].toString(16);
-        let g = color[1].toString(16);
-        let b = color[2].toString(16);
-        return '#' + padZero(r) + padZero(g) + padZero(b);
-    }
-
-    function padZero(str, len) {
-        len = len || 2;
-        var zeros = new Array(len).join('0');
-        return (zeros + str).slice(-len);
-    }
-
-    var container = document.getElementById("tag-list");
-    var tags = "{{Tags}}".split(" ");
-    for(let tag of tags) {
-        if(!tag) {
-            continue;
-        }
-        let span = document.createElement("span");
-        span.className = "tag";
-        span.textContent = tag;
-        let color = randColor();
-        span.style.backgroundColor = formatColor(color);
-        span.style.color = formatColor(fgFromBg(color));
-        container.appendChild(span);
-        // add a non-breaking space for easy copying
-        container.appendChild(new Text('\xA0'));
-    }
-    if(container.lastChild) {
-        container.removeChild(container.lastChild);
-    }
-</script>
-"""
 
 css = """
 <style>
@@ -67,12 +16,57 @@ css = """
 </style>
 """
 
-html = """<div id="tag-list"></div>"""
+html = """<div id="tag-list">{}</div>"""
+
+# Some snippets are adapted from https://stackoverflow.com/a/35970186
 
 
-def on_card_did_render(output: TemplateRenderOutput, ctx: TemplateRenderContext) -> None:
-    tags = " ".join(ctx.note().tags)
-    text = html + css + js.replace("{{Tags}}", tags)
+def rand_color() -> List[int]:
+    r = random.randrange(0, 256)
+    g = random.randrange(0, 256)
+    b = random.randrange(0, 256)
+    return [r, g, b]
+
+
+def fb_from_bg(color):
+    r = color[0]
+    g = color[1]
+    b = color[2]
+    return [0, 0, 0] if (r * 0.299 + g * 0.587 + b * 0.114) > 186 else [255, 255, 255]
+
+
+def pad_zero(s):
+    return s.zfill(2)
+
+
+def format_color(color):
+    r = hex(color[0])[2:]
+    g = hex(color[1])[2:]
+    b = hex(color[2])[2:]
+    return "#" + pad_zero(r) + pad_zero(g) + pad_zero(b)
+
+
+def taglist_str(tags: List[str]) -> str:
+    elements = []
+    for tag in tags:
+        color = rand_color()
+        bg_color = format_color(color)
+        fg_color = format_color(fb_from_bg(color))
+        span = f'<span class="tag" style="color: {fg_color}; background-color: {bg_color};">{tag}</span>'
+        elements.append(span)
+        # add a non-breaking space for easy copying
+        elements.append("\xA0")
+    if len(elements) > 0:
+        elements.pop()
+
+    return "\n".join(elements)
+
+
+def on_card_did_render(
+    output: TemplateRenderOutput, ctx: TemplateRenderContext
+) -> None:
+    tags = ctx.note().tags
+    text = html.format(taglist_str(tags)) + css
     output.question_text = text + output.question_text
     output.answer_text = text + output.answer_text
 
