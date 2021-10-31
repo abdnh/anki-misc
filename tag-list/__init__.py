@@ -52,6 +52,10 @@ def format_color(color):
 config = mw.addonManager.getConfig(__name__)
 
 
+def escape_tag(tag: str) -> str:
+    return re.sub(r"[*_\\]", r"\\\g<0>", tag).replace("\\", "\\\\").replace("'", r"\'")
+
+
 def taglist_str(tags: List[str]) -> str:
     elements = []
     for tag in tags:
@@ -62,8 +66,8 @@ def taglist_str(tags: List[str]) -> str:
             styles = """style="color: grey; border: none;" """
         else:
             styles = f"""style="color: {fg_color}; background-color: {bg_color};" """
-        escaped_tag = re.sub(r"[*_\\]", r"\\\g<0>", tag).replace("\\", "\\\\")
-        tag_el = f"""<a href=# onclick="pycmd('search:tag:{escaped_tag}'); return false;" class="tag" {styles}>{tag}</a>"""
+        escaped_tag = escape_tag(tag)
+        tag_el = f"""<a href=# onclick="pycmd('search:&quot;tag:{escaped_tag}&quot;'); return false;" class="tag" {styles}>{tag}</a>"""
         elements.append(tag_el)
 
     return "\n".join(elements)
