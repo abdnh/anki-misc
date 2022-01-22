@@ -2,8 +2,15 @@
 // @name wikipedia-math-copy
 // @namespace Violentmonkey Scripts
 // @match *://*.wikipedia.org/*
+// @grant GM_addStyle
 // @description Modifies browser's copy behavior to copy the LaTeX source of math expressions in Wikipedia
 // ==/UserScript==
+
+GM_addStyle(`
+.mwe-math-element {
+  user-select: all;
+}
+`);
 
 document.addEventListener('copy', function (event) {
     const selection = window.getSelection();
