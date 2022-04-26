@@ -7,8 +7,8 @@ if [ -a $addon/__init__.py ]
 then
     echo - packaging $addon
     rm -f $out
-	rm -f $addon/meta.json
 	rm -rf $addon/__pycache__
 	cd $addon/
+    echo "{\"package\": \"$addon\", \"name\": \"$addon\"}" > manifest.json
     zip -r ../$out *
 fi

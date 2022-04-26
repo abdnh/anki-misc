@@ -6,3 +6,4 @@ venv/
 tmp*
 ankiprofile/
 *.ankiaddon
+manifest.json
