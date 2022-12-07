@@ -7,3 +7,4 @@ tmp*
 ankiprofile/
 *.ankiaddon
 manifest.json
+meta.json
