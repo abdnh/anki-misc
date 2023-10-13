@@ -66,7 +66,6 @@ def escape_tag(tag: str) -> str:
 
 def taglist_str(tags: List[str]) -> str:
     elements = []
-    color = rand_color()  # python easy mutable stupidity
     for tag in tags:
         if config.get("blandcolors", True):
             color = rand_bland_color()
