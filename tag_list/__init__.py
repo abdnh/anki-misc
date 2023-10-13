@@ -21,6 +21,7 @@ css = """
 
 html = """<div id="tag-list">{}</div>"""
 
+
 # Some snippets are adapted from https://stackoverflow.com/a/35970186
 
 
@@ -28,6 +29,13 @@ def rand_color() -> List[int]:
     r = random.randrange(0, 256)
     g = random.randrange(0, 256)
     b = random.randrange(0, 256)
+    return [r, g, b]
+
+
+def rand_bland_color() -> List[int]:
+    r = random.randrange(100, 156)  # Adjust the range for red channel (100-155)
+    g = random.randrange(100, 156)  # Adjust the range for green channel (100-155)
+    b = random.randrange(100, 156)  # Adjust the range for blue channel (100-155)
     return [r, g, b]
 
 
@@ -58,8 +66,12 @@ def escape_tag(tag: str) -> str:
 
 def taglist_str(tags: List[str]) -> str:
     elements = []
+    color = rand_color()  # python easy mutable stupidity
     for tag in tags:
-        color = rand_color()
+        if config.get("blandcolors", True):
+            color = rand_bland_color()
+        else:
+            color = rand_color()
         bg_color = format_color(color)
         fg_color = format_color(fb_from_bg(color))
         if config.get("nocolors", False):
@@ -74,7 +86,7 @@ def taglist_str(tags: List[str]) -> str:
 
 
 def on_card_did_render(
-    output: TemplateRenderOutput, ctx: TemplateRenderContext
+        output: TemplateRenderOutput, ctx: TemplateRenderContext
 ) -> None:
     tags = ctx.note().tags
     text = html.format(taglist_str(tags)) + css
