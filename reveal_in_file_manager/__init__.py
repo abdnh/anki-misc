@@ -2,7 +2,7 @@ import subprocess
 
 from anki.utils import isMac, isWin, noBundledLibs
 from aqt import mw
-from aqt.gui_hooks import editor_will_show_context_menu
+from aqt.gui_hooks import editor_will_show_context_menu, webview_will_show_context_menu
 from aqt.qt import *
 from aqt.webview import AnkiWebView
 
@@ -46,3 +46,4 @@ def add_reveal_in_file_manager(webview: AnkiWebView, menu: QMenu) -> None:
 
 
 editor_will_show_context_menu.append(add_reveal_in_file_manager)
+webview_will_show_context_menu.append(add_reveal_in_file_manager)
